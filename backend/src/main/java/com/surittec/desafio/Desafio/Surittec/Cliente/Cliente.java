@@ -20,9 +20,9 @@ public class Cliente {
     @Column(name="cpf", nullable = false)
     private String cpf;
 
+    @OneToOne(mappedBy = "cliente")
+    private ClienteEndereco endereco;
 
-    private ClienteEndereco Endereco;
-    private List<String> Telefones;
-    private List<String> Email;
-
+    @OneToMany(mappedBy = "cliente")
+    private List<ClienteTelefone> clienteTelefones;
 }
