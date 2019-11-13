@@ -1,24 +1,22 @@
 package com.surittec.desafio.Desafio.Surittec.Cliente;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name="cliente_telefone")
+@Table(name="cliente_email")
 @EntityListeners(AuditingEntityListener.class)
-public class ClienteTelefone {
+public class ClienteEmail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(name="tipo", nullable = false)
-    private String tipo;
-
-    @Column(name="numero", nullable = false)
-    private String numero;
+    @Column(name="email", nullable = false)
+    private String email;
 
     @OneToOne()
     @JsonBackReference
@@ -32,20 +30,12 @@ public class ClienteTelefone {
         this.id = id;
     }
 
-    public String getTipo() {
-        return tipo;
+    public String getEmail() {
+        return email;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    public String getNumero() {
-        return numero;
-    }
-
-    public void setNumero(String numero) {
-        this.numero = numero;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Cliente getCliente() {

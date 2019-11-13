@@ -1,5 +1,7 @@
 package com.surittec.desafio.Desafio.Surittec.Cliente;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -29,11 +31,14 @@ public class ClienteEndereco {
     private String uf;
 
     @OneToOne()
+    @JsonBackReference
     private Cliente cliente;
 
     public long getId() {
         return id;
     }
+
+    public void setId(long id) { this.id = id; }
 
     public String getCep() {
         return cep;

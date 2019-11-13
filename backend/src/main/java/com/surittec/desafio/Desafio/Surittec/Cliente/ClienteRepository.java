@@ -1,4 +1,10 @@
 package com.surittec.desafio.Desafio.Surittec.Cliente;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface ClienteRepository {
+import java.util.List;
+
+@Repository
+public interface ClienteRepository extends JpaRepository<Cliente, Long> {
+    List<Cliente> findByCPF (final String cpf);
 }
