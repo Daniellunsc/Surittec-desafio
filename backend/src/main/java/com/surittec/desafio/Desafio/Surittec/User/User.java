@@ -1,17 +1,17 @@
 package com.surittec.desafio.Desafio.Surittec.User;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.surittec.desafio.Desafio.Surittec.Cliente.ClienteEmail;
-import com.surittec.desafio.Desafio.Surittec.Log.Log;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Collection;
 
 @Entity
 @Table(name="users")
 @EntityListeners(AuditingEntityListener.class)
-public class User {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,10 +22,6 @@ public class User {
 
     @Column(name="senha", nullable = false)
     private String senha;
-
-    @OneToMany(mappedBy = "usuario", cascade = {CascadeType.ALL})
-    @JsonManagedReference
-    private List<Log> logs;
 
     public long getId() {
         return id;
@@ -51,11 +47,39 @@ public class User {
         this.senha = senha;
     }
 
-    public List<Log> getLogs() {
-        return logs;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
     }
 
-    public void setLogs(List<Log> logs) {
-        this.logs = logs;
+    @Override
+    public String getPassword() {
+        return this.senha;
+    }
+
+    @Override
+    public String getUsername() {
+        return this.usuario;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
     }
 }
