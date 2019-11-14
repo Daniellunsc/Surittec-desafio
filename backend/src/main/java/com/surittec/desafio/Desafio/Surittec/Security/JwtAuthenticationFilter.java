@@ -1,6 +1,8 @@
 package com.surittec.desafio.Desafio.Surittec.Security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.surittec.desafio.Desafio.Surittec.User.User;
+import com.surittec.desafio.Desafio.Surittec.User.UserLoginData;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import net.minidev.json.JSONObject;
@@ -28,11 +30,19 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest req, HttpServletResponse res) {
-        String usuario = req.getParameter("usuario");
-        String senha = req.getParameter("senha");
+        UserLoginData userLogin = parseLoginData(req);
 
-        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(usuario, senha);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userLogin.getUsuario(), userLogin.getSenha());
         return authManager.authenticate(authToken);
+    }
+
+    private UserLoginData parseLoginData(HttpServletRequest req) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            return mapper.readValue(req.getInputStream(), UserLoginData.class);
+        } catch (IOException exception) {
+            return new UserLoginData();
+        }
     }
 
     @Override
