@@ -3,16 +3,19 @@ package com.surittec.desafio.Desafio.Surittec.Security;
 import com.surittec.desafio.Desafio.Surittec.User.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+import net.minidev.json.JSONObject;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import java.security.Security;
+import javax.xml.bind.DatatypeConverter;
+import java.io.IOException;
+import java.security.Key;
 
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authManager;
@@ -33,13 +36,14 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     @Override
-    public void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain fChain, Authentication authentication) {
+    public void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain fChain, Authentication authentication) throws IOException {
         User user = ((User) authentication.getPrincipal());
 
-        byte[] signinKey = SecurityConstants.JWT_SECRET.getBytes();
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(SecurityConstants.JWT_SECRET);
+        Key signingKey = new SecretKeySpec(apiKeySecretBytes, SignatureAlgorithm.HS256.getJcaName());
 
         String token = Jwts.builder()
-                .signWith(Keys.hmacShaKeyFor(signinKey), SignatureAlgorithm.ES512)
+                .signWith(signingKey)
                 .setHeaderParam("typ", SecurityConstants.TOKEN_TYPE)
                 .setIssuer(SecurityConstants.TOKEN_ISSUER)
                 .setAudience(SecurityConstants.TOKEN_AUDIENCE)
@@ -47,5 +51,11 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 .compact();
 
         res.addHeader(SecurityConstants.TOKEN_HEADER, SecurityConstants.TOKEN_PREFIX + token);
+        res.setContentType("application/json");
+        res.setCharacterEncoding("UTF-8");
+        JSONObject json = new JSONObject();
+        json.appendField("token", token);
+        res.getWriter().write(json.toString());
+
     }
 }

@@ -34,12 +34,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManager) throws Exception {
-        authenticationManager.userDetailsService(apiUserDetailsService());
+        authenticationManager.userDetailsService(apiUserDetailsService()).passwordEncoder(passwordEncoder());
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new PasswordEnconderTest();
     }
 
     @Bean
@@ -54,6 +54,5 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         return source;
     }
-
-
 }
+
