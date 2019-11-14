@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Login from './Login';
 import Home from './Home';
+import Cliente from './Cliente';
  
 class AppContent extends React.Component {
     render(){
@@ -10,6 +11,7 @@ class AppContent extends React.Component {
             <Switch>
                 <Route exact path="/" component={Login} />
                 <Route exact path="/home" component={Home} />
+                <Route exact path="/cliente/:id" component={Cliente} />
             </Switch>
         </BrowserRouter>
         )
