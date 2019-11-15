@@ -1,6 +1,8 @@
 package com.surittec.desafio.Desafio.Surittec.Cliente;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -12,6 +14,14 @@ import java.util.List;
 @Table(name="clientes")
 @EntityListeners(AuditingEntityListener.class)
 public class Cliente {
+
+    public Cliente(Long cliente) {
+        this.setId(cliente);
+    }
+
+    public Cliente(){
+
+    }
 
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)

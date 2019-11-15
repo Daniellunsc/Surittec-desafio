@@ -2,14 +2,14 @@ package com.surittec.desafio.Desafio.Surittec.Cliente;
 
 import com.surittec.desafio.Desafio.Surittec.User.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class ClienteController {
@@ -20,6 +20,15 @@ public class ClienteController {
     @GetMapping("/clientes")
     public List<Cliente> getAllClientes(){
         return clienteRepository.findAll();
+    }
+
+    @GetMapping("/clientes/{id}")
+    public ResponseEntity<Cliente> getOneCliente(@PathVariable(value="id") Long userId){
+        Cliente cliente =
+                clienteRepository
+                        .findById(userId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado :: " + userId));
+        return ResponseEntity.ok().body(cliente);
     }
 
     @PostMapping("/clientes")
