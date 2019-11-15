@@ -1,8 +1,6 @@
-package com.surittec.desafio.Desafio.Surittec.Cliente;
+package com.surittec.desafio.Desafio.Surittec.Cliente.Telefone;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface ClienteTelefoneRepository extends JpaRepository<ClienteTelefone, Long> {

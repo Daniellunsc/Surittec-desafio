@@ -11,6 +11,7 @@ class AppContent extends React.Component {
             <Switch>
                 <Route exact path="/" component={Login} />
                 <Route exact path="/home" component={Home} />
+                <Route exact path="/createcliente" component={Cliente} />
                 <Route exact path="/cliente/:id" component={Cliente} />
             </Switch>
         </BrowserRouter>

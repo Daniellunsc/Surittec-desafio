@@ -1,87 +1,135 @@
 import React from "react";
-import { getClienteById } from "../api/clientes";
+import { getClienteById, createCliente } from "../api/clientes";
 import TelefoneForm from "./Forms/TelefoneForm";
 import EmailForm from "./Forms/EmailForm";
+import EnderecoForm from "./Forms/EnderecoForm";
+import ClienteForm from "./Forms/ClienteForm";
+import Divider from "./Divider";
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom'
+import { setClient } from "../actions";
 
 class Cliente extends React.Component {
   state = {
     clientData: {},
-    loading: true
+    loading: true,
+    errors: [],
+    redirect: {
+      to: null,
+      should: false,
+    },
   };
 
   componentDidMount() {
-    const { match } = this.props;
-    if (match) {
-      const { id } = match.params;
-      getClienteById(id).then(res => this.setState({ clientData: res, loading: false }));
+    const { match, clientData, setClient } = this.props;
+    if (clientData) {
+      if (match.params.id) {
+        getClienteById(match.params.id)
+          .then(res => setClient(res))
+      } else {
+        this.setState({ clientData: clientData, loading: false })
+      }
+
     }
   }
 
-  addItemToArray = (type) => {
-    const { clientData } = this.state;
-    switch (type) {
-      case 'email':
-          const emails = clientData.emails;
-          const creatingEmails = emails.filter(email => email.id === "")
-          if (emails.length === 0 || creatingEmails.length > 0) {
-            alert('Já existe um email a ser criado, salve-o antes de adicionar um novo.')
-            return;
-          }
-  
-          this.setState({
-            clientData: {
-              ...clientData,
-              emails: [
-                ...clientData.emails,
-                {
-                  id: "",
-                  email: "",
-                }
-              ]
-            }
-          })
-          return;
-      case 'telefone':
-        if (clientData.telefones.filter(telefone => telefone.id === "").length > 0) {
-          alert('Já existe um telefone a ser criado, salve-o antes de adicionar um novo.')
-          return;
-        }
+  componentDidUpdate(prevProps) {
+    const {clientData} = this.props;
+    if (prevProps.clientData !== clientData) {
+      this.setState({ clientData: clientData, loading: false })
+    }
+  }
 
+  createOrUpdateClient = () => {
+    let validationResults = this.validateToInsert();
+    if (validationResults.length > 0) {
+      this.setState({ errors: validationResults })
+      return
+    }
+
+    const { clientData } = this.props;
+    const { nome, cpf, endereco, emails, telefones } = clientData;
+    createCliente(nome, cpf, endereco, telefones, emails).then(res => {
+      if (res.id) {
         this.setState({
-          clientData: {
-            ...clientData,
-            telefones: [
-              ...clientData.telefones,
-              {
-                id: "",
-                tipo: "",
-                numero: "",
-              }
-            ]
+          redirect: {
+            to: res.id,
+            should: true
           }
         })
-        return;
-      default:
-        return;
-    }
+      }
+    })
   }
 
-  reloadCallback = () => {
-    const { match } = this.props;
-    if (match) {
-      const { id } = match.params;
-      getClienteById(id).then(res => this.setState({ clientData: res, loading: false }));
+  validateToInsert = () => {
+    const errors = [];
+    const { clientData } = this.state;
+    const { nome, cpf, endereco, emails, telefones } = clientData;
+
+    if (!nome) {
+      errors.push('Nome não informado');
     }
+
+    if (!cpf) {
+      errors.push('CPF não informado');
+    }
+
+    if (!endereco.cep) {
+      errors.push('CEP não informado')
+    }
+
+    if (!endereco.logradouro) {
+      errors.push('Logradouro não informado')
+    }
+
+    if (!endereco.bairro) {
+      errors.push('Bairro não informado')
+    }
+
+    if (!endereco.cidade) {
+      errors.push('Cidade não informado')
+    }
+
+    if (!endereco.uf) {
+      errors.push('UF não informado')
+    }
+
+    if (telefones.length === 0 || telefones.filter(telefone => telefone.tipo === "").length > 0) {
+      errors.push('Ao menos um telefone deve ser registrado')
+    }
+
+    if (emails.length === 0 || emails.filter(email => email.email === "").length > 0) {
+      errors.push('Ao menos um email deve ser registrado')
+    }
+
+
+    return errors;
   }
 
   render() {
-    const { clientData, loading } = this.state;
+    const { clientData, loading, errors, redirect } = this.state;
+    const {match} = this.props;
+    if (redirect.should) {
+      return <Redirect to={`/cliente/${redirect.to}`} />
+    }
+
     return (
-      <div class={`card ${!loading && 'card-unico-cliente'}`} style={{ width: "18rem" }}>
-        <div class="card-header">
-          voltar
-        </div>
-        <div class="card-body card-clientes-body">
+      <div
+        class={`card ${!loading && "card-unico-cliente"} ${errors.length > 0 && 'border-warning'}`}
+        style={{ width: "18rem" }}
+      >
+        <div class="card-header">voltar</div>
+        {
+          errors.length > 0 && (
+            <div class="alert alert-warning alert-dismissible" role="alert">
+              <strong>Ops!</strong> Verifique os campos
+                            <ul>
+                {errors.map(error => <li>{error}</li>)}
+              </ul>
+            </div>
+          )
+        }
+        <div class="card-body card-clientes-body my-0 py-0">
           {loading && (
             <>
               <div class="spinner-border text-primary" role="status">
@@ -93,116 +141,71 @@ class Cliente extends React.Component {
 
           {!loading && clientData && (
             <>
-              <h6 class="card-subtitle mb-2 text-muted text-center">Dados do cliente</h6>
-              <div className="dropdown-divider" />
-              <form>
-                <div class="form-group">
-                  <div className="row">
-                    <div className="col-md-6">
-                      <label className="text-left">Nome</label>
-                      <input type="text" class="form-control" placeholder="José" />
-                    </div>
+              <Divider text="Dados do cliente" />
+              <ClienteForm
+                creating={!match.params.id ? true : false}
+                clienteId={match.params.id || null}
+              />
+              <Divider text="Endereço do cliente" />
+              <EnderecoForm
+                creating={!match.params.id ? true : false}
+                clienteId={match.params.id || null}
+                enderecoData={clientData.endereco || null}
+              />
 
-                    <div className="col-md-6">
-                      <label className="text-left">CPF</label>
-                      <input type="text" class="form-control" placeholder="000.000.000-00" />
-                    </div>
-                  </div>
-
-
-
-                </div>
-
-                <div className="dropdown-divider" />
-                <label className="text-muted text-center">Endereço do cliente</label>
-                <div class="form-group">
-
-                </div>
-                <div className="row">
-                  <div className="col-md-4">
-                    <label className="text-left">CEP</label>
-                    <input type="text" class="form-control" placeholder="00000-000" />
-                  </div>
-
-                  <div className="col-md-8">
-                    <label className="text-left">Logradouro</label>
-                    <input type="text" class="form-control" placeholder="Logradouro" />
-                  </div>
-                </div>
-
-                <div className="row my-3">
-                  <div className="col-md-5">
-                    <label className="text-left">Bairro</label>
-                    <input type="text" class="form-control" placeholder="Bairro" />
-                  </div>
-
-                  <div className="col-md-5">
-                    <label className="text-left">Cidade</label>
-                    <input type="text" class="form-control" placeholder="Cidade" />
-                  </div>
-
-                  <div className="col-md-2">
-                    <label className="text-left">UF</label>
-                    <input type="text" class="form-control" placeholder="UF" />
-                  </div>
-                </div>
-
-                <div className="row my-3">
-                  <div className="col-md-12">
-                    <label className="text-left">Complemento</label>
-                    <textarea type="text" class="form-control" placeholder="complemento" />
-                  </div>
-                </div>
-              </form>
-
-              <div className="dropdown-divider" />
-              <div className="d-flex justify-content-between my-2">
-                <label className="text-muted text-center">Telefone(s)</label>
-                <button className="btn btn-success" onClick={() => this.addItemToArray('telefone')}>Adicionar</button>
-              </div>
+              <Divider text="Telefone(s)" type="telefone" />
 
               {clientData.telefones.length > 0 &&
-                (clientData.telefones.map(telefone =>
+                clientData.telefones.map(telefone => (
                   <TelefoneForm
+                    creating={!match.params.id ? true : false}
                     telefones={clientData.telefones}
                     key={telefone.id}
                     client={clientData.id}
                     telefoneData={telefone}
-                    reloadCallback={this.reloadCallback}
-                  />))}
-
-              {clientData.telefones.length === 0 &&
-                (<TelefoneForm telefones={clientData.telefones} client={clientData.id} telefoneData={null} reloadCallback={this.reloadCallback} />)}
-
-              <div className="dropdown-divider" />
-              <div className="d-flex justify-content-between my-2">
-                <label className="text-muted text-center">Email(s)</label>
-                <button className="btn btn-success" onClick={() => this.addItemToArray('email')}>Adicionar</button>
-              </div>
+                  />
+                ))}
+              <Divider text={"Email(s)"} type="email" />
               {clientData.emails.length > 0 &&
-                (clientData.emails.map(email =>
+                clientData.emails.map(email => (
                   <EmailForm
+                    action={match.params.id ? 'edit' : 'create'}
                     emails={clientData.emails}
                     key={email.id}
-                    client={clientData.id}
+                    client={clientData.id || null}
                     emailData={email}
                     reloadCallback={this.reloadCallback}
-                  />))}
-
-              {clientData.emails.length === 0 &&
-                (<EmailForm
-                  emails={clientData.emails}
-                  client={clientData.id}
-                  emailData={null}
-                  reloadCallback={this.reloadCallback}
-                />)}
-
+                    pushToClient={this.pushToClient}
+                    removeFromClient={this.removeFromClient}
+                  />
+                ))}
             </>
           )}
+        </div>
+        <div className="card-footer">
+          {match.params.id 
+          ? 
+            <button
+            className="btn btn-danger"
+            onClick={() => this.createOrUpdateClient()}>Deletar cliente</button>
+            :
+            <button
+            className="btn btn-success"
+            onClick={() => this.createOrUpdateClient()}>Criar cliente</button>
+          }
+          
         </div>
       </div>
     );
   }
 }
 
-export default Cliente;
+const mapStateToProps = ({ clienteReducer }) => {
+  return { clientData: clienteReducer }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return { setClient: (clientData) => dispatch(setClient(clientData)) }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Cliente);

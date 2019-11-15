@@ -1,8 +1,9 @@
 package com.surittec.desafio.Desafio.Surittec.Cliente;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.surittec.desafio.Desafio.Surittec.Cliente.Email.ClienteEmail;
+import com.surittec.desafio.Desafio.Surittec.Cliente.Endereco.ClienteEndereco;
+import com.surittec.desafio.Desafio.Surittec.Cliente.Telefone.ClienteTelefone;
 import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -15,8 +16,12 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 public class Cliente {
 
-    public Cliente(Long cliente) {
-        this.setId(cliente);
+    public Cliente(Long clienteId) {
+        this.setId(clienteId);
+    }
+
+    public Cliente(String clienteId) {
+        this.setId(Long.parseLong(clienteId));
     }
 
     public Cliente(){
@@ -72,11 +77,11 @@ public class Cliente {
     }
 
     @JsonIgnore
-    public ClienteEndereco getEndereco() {
+    public com.surittec.desafio.Desafio.Surittec.Cliente.Endereco.ClienteEndereco getEndereco() {
         return endereco;
     }
 
-    public void setEndereco(ClienteEndereco endereco) {
+    public void setEndereco(com.surittec.desafio.Desafio.Surittec.Cliente.Endereco.ClienteEndereco endereco) {
         this.endereco = endereco;
     }
 

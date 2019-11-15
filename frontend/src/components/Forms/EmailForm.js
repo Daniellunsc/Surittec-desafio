@@ -1,18 +1,23 @@
 import React from 'react';
 import { createEmail, editEmail, deleteEmail } from '../../api/emails';
+import { setEmail, setDeleteEmail } from '../../actions';
+import { connect } from 'react-redux'
+import ControlButtons from './ControlButtons';
+import InputLabel from '../InputLabel';
 
 class EmailForm extends React.Component {
 
     state = {
         hovering: false,
         email: '',
-        editing: false
+        editing: false,
+        errors: [],
     }
 
     componentDidMount() {
         const { emailData } = this.props;
         if (emailData) {
-            this.setState({ email: emailData.email })
+            this.setState({ id: emailData.id, email: emailData.email })
         }
     }
 
@@ -27,45 +32,93 @@ class EmailForm extends React.Component {
     }
 
     saveEmail = () => {
-        const { emailData, client, reloadCallback } = this.props;
-        const { email } = this.state;
-        if (!emailData || emailData.id === "") {
-            createEmail(client, email).then((res) => this.setState({ editing: false })).then(() =>reloadCallback())
-        } else {
-            editEmail({ email, cliente: client }, emailData.id).then((res) => this.setState({ editing: false })).then(() => reloadCallback())
+        const { emailData, client, creating, saveEmail, removeEmail } = this.props;
+        const { id, email } = this.state;
+        let validationResults = this.validateFields();
+
+        if (validationResults.length > 0) {
+            this.setState({ errors: validationResults })
+            return;
         }
+        saveEmail(id, email)
+        this.setState({ editing: false, errors: [] })
+        if(!creating) {
+            if(emailData.email) {
+                editEmail({ email, cliente: client }, emailData.id).then((res) => {
+                    if(res) {
+                        saveEmail(res.id, res.tipo, res.numero)
+                    }
+                    this.setState({ editing: false })
+                })
+            } else {
+                createEmail(client, email).then(res => {
+                    if(res.id) {
+                        removeEmail(id)
+                        saveEmail(res.id, res.email)
+                    }
+                })
+            }
+        }
+
+       
+    }
+
+    validateFields = () => {
+        const { email } = this.state;
+        let errors = [];
+        let reValidEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if (!email) {
+            errors.push('Email deve ser preenchido.')
+        }
+
+        if (email && !email.match(reValidEmail)) {
+            errors.push('Email não está em um formato válido.')
+        }
+
+        return errors;
     }
 
     deleteEmail = () => {
-        const { emailData, reloadCallback, emails } = this.props;
-        if (emails.length > 1) {
-            if (emailData) {
-                deleteEmail(emailData.id).then((res) => reloadCallback())
+        const { emailData, creating, emails, action, removeEmail } = this.props;
+        const { id } = this.state;
+        if(!creating){
+            const validEmailsRemaining = emails.filter(email => email.email !== "" && email.id !== emailData.id)
+            if(validEmailsRemaining.length >= 1) {
+                if(emailData.email !== "") {
+                    deleteEmail(emailData.id).then(res => removeEmail(emailData.id))
+                } else {
+                    removeEmail(emailData.id)
+                }
+            } else {
+                alert('É necessário ao menos um email válido.')
             }
+        } else{
+            removeEmail(emailData.id)
         }
     }
-
     render() {
-        const { hovering, email, editing } = this.state;
-        const { emailData, emails } = this.props;
-        const emailsValidos = emails.filter(email => email.id !== ""); 
+        const { hovering, email, editing, errors } = this.state;
         return (
-            <div class="card my-2" onMouseEnter={() => this.setState({ hovering: true })} onMouseLeave={() => this.setState({ hovering: false })}>
+            <div class={`card my-2 ${errors.length > 0 && 'border-warning'}`} onMouseEnter={() => this.setState({ hovering: true })} onMouseLeave={() => this.setState({ hovering: false })}>
+                {
+                    errors.length > 0 && (
+                        <div class="alert alert-warning alert-dismissible" role="alert">
+                            <strong>Ops!</strong> Verifique os campos
+                            <ul>
+                                {errors.map(error => <li>{error}</li>)}
+                            </ul>
+                        </div>
+                    )
+                }
                 <div class="card-body">
                     {
                         hovering && (
-                            <div className="d-flex justify-content-end">
-                                <div className="btn btn-group m-0 p-0">
-                                    {!editing && <button className="btn btn-outline-primary" onClick={this.setEdit}>editar</button>}
-                                    {editing && <button className="btn btn-outline-success" onClick={this.saveEmail}>salvar</button>}
-                                    {emailData && emailsValidos.length> 1 && (<button className="btn btn-outline-danger" onClick={this.deleteEmail}>excluir</button>)}
-                                </div>
-                            </div>
+                            <ControlButtons editing={editing} edit={this.setEdit} save={this.saveEmail} deleteAction={this.deleteEmail} />
                         )
                     }
                     <div className="row my-3">
                         <div className="col-md-12">
-                            <label className="text-left">Email</label>
+                            <InputLabel text="Email" required/>
                             <input
                                 disabled={!editing}
                                 onChange={this.handleChange}
@@ -75,7 +128,7 @@ class EmailForm extends React.Component {
                                 class="form-control"
                                 placeholder="Email" />
                         </div>
-                    
+
                     </div>
                 </div>
             </div>
@@ -83,4 +136,12 @@ class EmailForm extends React.Component {
     }
 }
 
-export default EmailForm;
+const mapDispatchToProps = (dispatch) => {
+    return {
+        saveEmail: (id, email) => dispatch(setEmail(id, email)),
+        removeEmail: (id) => dispatch(setDeleteEmail(id))
+    }
+}
+
+
+export default connect(null, mapDispatchToProps)(EmailForm);

@@ -1,34 +1,37 @@
-package com.surittec.desafio.Desafio.Surittec.Cliente;
+package com.surittec.desafio.Desafio.Surittec.Cliente.Endereco;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import net.minidev.json.annotate.JsonIgnore;
+import com.surittec.desafio.Desafio.Surittec.Cliente.Cliente;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name="cliente_endereco")
+@Table(name = "cliente_endereco")
 @EntityListeners(AuditingEntityListener.class)
 public class ClienteEndereco {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(name="cep", nullable = false)
+    @Column(name = "cep", nullable = false)
     private String cep;
 
-    @Column(name="logradouro", nullable = false)
+    @Column(name = "logradouro", nullable = false)
     private String logradouro;
 
-    @Column(name="bairro", nullable = false)
+    @Column(name = "bairro", nullable = false)
     private String bairro;
 
-    @Column(name="cidade", nullable = false)
+    @Column(name = "cidade", nullable = false)
     private String cidade;
 
-    @Column(name="uf", nullable = false)
+    @Column(name = "uf", nullable = false)
     private String uf;
+
+    @Column(name = "complemento", nullable = true)
+    private String complemento;
 
     @OneToOne()
     @JsonBackReference
@@ -38,7 +41,9 @@ public class ClienteEndereco {
         return id;
     }
 
-    public void setId(long id) { this.id = id; }
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getCep() {
         return cep;
@@ -78,6 +83,14 @@ public class ClienteEndereco {
 
     public void setUf(String uf) {
         this.uf = uf;
+    }
+
+    public String getComplemento() {
+        return complemento;
+    }
+
+    public void setComplemento(String complemento) {
+        this.complemento = complemento;
     }
 
     public Cliente getCliente() {

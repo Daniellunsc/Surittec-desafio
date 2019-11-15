@@ -1,5 +1,6 @@
-package com.surittec.desafio.Desafio.Surittec.Cliente;
+package com.surittec.desafio.Desafio.Surittec.Cliente.Telefone;
 
+import com.surittec.desafio.Desafio.Surittec.Cliente.Cliente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;

@@ -1,5 +1,6 @@
 package com.surittec.desafio.Desafio.Surittec.Cliente;
 
+import com.surittec.desafio.Desafio.Surittec.Cliente.Email.ClienteEmail;
 import com.surittec.desafio.Desafio.Surittec.User.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -40,5 +41,18 @@ public class ClienteController {
         Cliente errorCLiente = new Cliente();
         errorCLiente.setCPF("Já existe um cliente com esse CPF");
         return errorCLiente;
+    }
+
+    @PutMapping("/clientes/{id}")
+    public ResponseEntity<Cliente> updateCliente(
+            @PathVariable(value = "id") Long clienteId, @Valid @RequestBody Cliente cliente) throws ResourceNotFoundException {
+        Cliente clientToSave =
+                clienteRepository
+                        .findById(clienteId)
+                        .orElseThrow(() -> new ResourceNotFoundException("Registro não encontrado " + clienteId));
+        clientToSave.setNome(cliente.getNome());
+        clientToSave.setCPF(cliente.getCPF());
+        final Cliente clienteAtualizado = clienteRepository.save(clientToSave);
+        return ResponseEntity.ok(clienteAtualizado);
     }
 }
