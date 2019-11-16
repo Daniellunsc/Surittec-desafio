@@ -46,7 +46,7 @@ public class ClienteTelefone {
     }
 
     public void setNumero(String numero) {
-        this.numero = numero;
+        this.numero = numero.replaceAll("[^a-zA-Z0-9]+","");
     }
 
     public Cliente getCliente() {

@@ -43,7 +43,7 @@ class Cliente extends React.Component {
 
   createOrDeleteClient = () => {
 
-    const { match } = this.props;
+    const { match, clearStoreContent } = this.props;
     if (match.params.id) {
       const confirmation = window.confirm('Você deseja deletar esse cliente?')
       if (confirmation) {
@@ -60,27 +60,29 @@ class Cliente extends React.Component {
         })
       }
 
-    }
-
-    let validationResults = this.validateToInsert();
-    if (validationResults.length > 0) {
-      this.setState({ errors: validationResults })
-      return
-    }
-
-    const { clientData, clearStoreContent } = this.props;
-    const { nome, cpf, endereco, emails, telefones } = clientData;
-    createCliente(nome, cpf, endereco, telefones, emails).then(res => {
-      if (res.id) {
-        clearStoreContent();
-        this.setState({
-          redirect: {
-            to: `/`,
-            should: true
-          }
-        })
+    } else {
+      let validationResults = this.validateToInsert();
+      if (validationResults.length > 0) {
+        this.setState({ errors: validationResults })
+        return
       }
-    })
+
+      const { clientData, clearStoreContent } = this.props;
+      const { nome, cpf, endereco, emails, telefones } = clientData;
+      createCliente(nome, cpf, endereco, telefones, emails).then(res => {
+        if (res.id) {
+          clearStoreContent();
+          this.setState({
+            redirect: {
+              to: `/`,
+              should: true
+            }
+          })
+        }
+      })
+    }
+
+
   }
 
   validateToInsert = () => {
@@ -209,11 +211,11 @@ class Cliente extends React.Component {
             ?
             <ProtectedComponent allowedUsers={['admin']}>
               <div>
-              <button
-                className="btn btn-danger"
-                onClick={() => this.createOrDeleteClient()}>Deletar cliente</button>
+                <button
+                  className="btn btn-danger"
+                  onClick={() => this.createOrDeleteClient()}>Deletar cliente</button>
               </div>
-             
+
             </ProtectedComponent>
             :
             <ProtectedComponent allowedUsers={['admin']}>

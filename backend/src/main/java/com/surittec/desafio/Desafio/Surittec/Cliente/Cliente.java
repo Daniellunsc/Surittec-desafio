@@ -73,7 +73,7 @@ public class Cliente {
     }
 
     public void setCPF(String CPF) {
-        this.CPF = CPF;
+        this.CPF = CPF.replaceAll("[^a-zA-Z0-9]+","");
     }
 
     @JsonIgnore

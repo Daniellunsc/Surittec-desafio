@@ -50,7 +50,7 @@ public class ClienteEndereco {
     }
 
     public void setCep(String cep) {
-        this.cep = cep;
+        this.cep = cep.replaceAll("[^a-zA-Z0-9]+","");
     }
 
     public String getLogradouro() {
