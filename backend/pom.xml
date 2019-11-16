@@ -16,6 +16,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+
 	</properties>
 
 	<dependencies>
@@ -88,6 +89,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>surittec-backend</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

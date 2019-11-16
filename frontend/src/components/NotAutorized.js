@@ -5,6 +5,7 @@ const NotAutorized = () => (
         <div class="card-body">
             <h5 class="card-title">Parece que você não pode acessar este recurso :(</h5>
             <a href="/home" class="btn btn-primary">Ir para home</a>
+            <a href="/" class="btn btn-primary mx-1">Ir para Login</a>
         </div>
     </div>
 )

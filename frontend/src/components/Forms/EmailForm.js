@@ -11,7 +11,7 @@ class EmailForm extends React.Component {
     state = {
         hovering: false,
         email: '',
-        editing: false,
+        editing: true,
         errors: [],
     }
 
@@ -131,7 +131,7 @@ class EmailForm extends React.Component {
                                 name="email"
                                 type="email"
                                 class="form-control"
-                                placeholder="Email" />
+                                placeholder="Digite o email" />
                         </div>
 
                     </div>

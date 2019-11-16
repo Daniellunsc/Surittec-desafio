@@ -14,7 +14,7 @@ class TelefoneForm extends React.Component {
         tipo: '',
         numero: '',
         hovering: false,
-        editing: false,
+        editing: true,
         errors: []
     }
 
@@ -147,7 +147,7 @@ class TelefoneForm extends React.Component {
                             </select>
                         </div>
                         <div className="col-md-8">
-                            <InputLabel text="Tipo" required />
+                            <InputLabel text="Telefone" required />
                             <NumberFormat
                                 format={tipo === "celular" ? "(##) # ####-####" : "(##) ####-####"}
                                 mask="_"

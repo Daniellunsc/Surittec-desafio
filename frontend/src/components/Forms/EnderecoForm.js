@@ -11,7 +11,7 @@ class EnderecoForm extends React.Component {
 
     state = {
         hovering: false,
-        editing: false,
+        editing: true,
         errors: [],
         cep: '',
         logradouro: '',

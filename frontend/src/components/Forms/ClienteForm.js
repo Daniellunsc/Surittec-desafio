@@ -10,7 +10,7 @@ import ProtectedComponent from "../ProtectedComponent";
 class ClienteForm extends React.Component {
   state = {
     hovering: false,
-    editing: false,
+    editing: true,
     nome: "",
     cpf: "",
     errors: []
@@ -107,7 +107,7 @@ class ClienteForm extends React.Component {
                   name="nome"
                   type="text"
                   class="form-control"
-                  placeholder="José"
+                  placeholder="Digite o nome"
                 />
               </div>
 

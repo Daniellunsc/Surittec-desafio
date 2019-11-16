@@ -1,0 +1,28 @@
+version: "3"
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    container_name: mysql
+    volumes:
+      - ./config:/docker-entrypoint-initdb.d
+    expose:
+      - "3306"
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345678
+
+  backend:
+    build: ./backend
+    depends_on:
+      - db
+    restart: always
+    links:
+      - db:db
+    ports:
+      - 8080:8080
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/restapi?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 12345678
