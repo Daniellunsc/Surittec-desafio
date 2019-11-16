@@ -41,3 +41,14 @@ export const editCliente = (clienteId, nome, cpf) => {
         body: JSON.stringify({nome, cpf})
     }).then(res => res.json())
 }
+
+export const deleteCliente = (clienteId) => {
+    const accessToken = localStorage.getItem("tokenAuth")
+    return fetch(`http://localhost:8080/clientes/${clienteId}`, {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        },
+        method: 'DELETE',
+    }).then(res => res.json())
+}

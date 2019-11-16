@@ -5,6 +5,7 @@ import { setTelefone, setDeleteTelefone } from '../../actions';
 import ControlButtons from './ControlButtons';
 import InputLabel from '../InputLabel';
 import NumberFormat from 'react-number-format';
+import ProtectedComponent from '../ProtectedComponent';
 
 class TelefoneForm extends React.Component {
 
@@ -129,7 +130,10 @@ class TelefoneForm extends React.Component {
                 <div class="card-body">
                     {
                         hovering && (
-                            <ControlButtons editing={editing} edit={this.setEdit} save={this.saveNumber} deleteAction={this.deleteNumber} />
+                            <ProtectedComponent allowedUsers={['admin']}>
+                                <ControlButtons editing={editing} edit={this.setEdit} save={this.saveNumber} deleteAction={this.deleteNumber} />
+                            </ProtectedComponent>
+                            
                         )
                     }
                     <div className="row my-3">

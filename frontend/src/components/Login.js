@@ -1,6 +1,8 @@
 import React from "react";
 import { checkAuth, performLogin } from "../api/login";
 import {Redirect} from 'react-router-dom';
+import { setUserLoggedIn } from "../actions";
+import {connect} from 'react-redux'
 
 class Login extends React.Component {
   state = {
@@ -39,9 +41,13 @@ class Login extends React.Component {
   }
 
   validateLoginResult = (loginResponse) => {
+    const {saveLoggedUser} = this.props;
+    const {usuario} = this.state;
     if(loginResponse) {
         if(loginResponse.token) {
             localStorage.setItem('tokenAuth', loginResponse.token);
+            this.setState({redirect: true})
+            saveLoggedUser({usuario})
         }
     }
   }
@@ -99,4 +105,11 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+const mapDispatchToProps = (dispatch) => {
+  return {
+      saveLoggedUser: (user) => dispatch(setUserLoggedIn(user))
+  }
+}
+
+
+export default connect(null, mapDispatchToProps)(Login);

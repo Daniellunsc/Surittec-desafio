@@ -9,6 +9,8 @@ export const REMOVE_TELEFONE = 'REMOVE_TELEFONE'
 export const ADD_EMAIL = 'ADD_EMAIL'
 export const SET_EMAIL = 'SET_EMAIL'
 export const REMOVE_EMAIL = 'REMOVE_EMAIL'
+export const SET_USER_LOGGEDIN = 'SET_USER_LOGGEDIN'
+export const CLEAR_STORE = 'CLEAR_STORE'
 
 export const setClient = (clientData) => ({
     type: SET_CLIENT_FULL_DATA,
@@ -58,4 +60,13 @@ export const setEmail = (id, email) => ({
 export const setDeleteEmail = (id) => ({
     type: REMOVE_EMAIL,
     id
+})
+
+export const setUserLoggedIn = (user) => ({
+    type: SET_USER_LOGGEDIN,
+    user
+})
+
+export const clearStore  = () => ({
+    type: CLEAR_STORE
 })

@@ -1,5 +1,5 @@
 import React from "react";
-import { getClienteById, createCliente } from "../api/clientes";
+import { getClienteById, createCliente, deleteCliente } from "../api/clientes";
 import TelefoneForm from "./Forms/TelefoneForm";
 import EmailForm from "./Forms/EmailForm";
 import EnderecoForm from "./Forms/EnderecoForm";
@@ -7,7 +7,8 @@ import ClienteForm from "./Forms/ClienteForm";
 import Divider from "./Divider";
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom'
-import { setClient } from "../actions";
+import { setClient, clearStore } from "../actions";
+import ProtectedComponent from "./ProtectedComponent";
 
 class Cliente extends React.Component {
   state = {
@@ -34,26 +35,47 @@ class Cliente extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    const {clientData} = this.props;
+    const { clientData } = this.props;
     if (prevProps.clientData !== clientData) {
       this.setState({ clientData: clientData, loading: false })
     }
   }
 
-  createOrUpdateClient = () => {
+  createOrDeleteClient = () => {
+
+    const { match } = this.props;
+    if (match.params.id) {
+      const confirmation = window.confirm('Você deseja deletar esse cliente?')
+      if (confirmation) {
+        deleteCliente(match.params.id).then(res => {
+          if (res.id) {
+            clearStoreContent()
+            this.setState({
+              redirect: {
+                to: '/',
+                should: true,
+              }
+            })
+          }
+        })
+      }
+
+    }
+
     let validationResults = this.validateToInsert();
     if (validationResults.length > 0) {
       this.setState({ errors: validationResults })
       return
     }
 
-    const { clientData } = this.props;
+    const { clientData, clearStoreContent } = this.props;
     const { nome, cpf, endereco, emails, telefones } = clientData;
     createCliente(nome, cpf, endereco, telefones, emails).then(res => {
       if (res.id) {
+        clearStoreContent();
         this.setState({
           redirect: {
-            to: res.id,
+            to: `/`,
             should: true
           }
         })
@@ -108,9 +130,9 @@ class Cliente extends React.Component {
 
   render() {
     const { clientData, loading, errors, redirect } = this.state;
-    const {match} = this.props;
+    const { match } = this.props;
     if (redirect.should) {
-      return <Redirect to={`/cliente/${redirect.to}`} />
+      return <Redirect to={`${redirect.to}`} />
     }
 
     return (
@@ -118,7 +140,9 @@ class Cliente extends React.Component {
         class={`card ${!loading && "card-unico-cliente"} ${errors.length > 0 && 'border-warning'}`}
         style={{ width: "18rem" }}
       >
-        <div class="card-header">voltar</div>
+        <div class="card-header">
+          <a href="/">voltar</a>
+        </div>
         {
           errors.length > 0 && (
             <div class="alert alert-warning alert-dismissible" role="alert">
@@ -169,32 +193,43 @@ class Cliente extends React.Component {
               {clientData.emails.length > 0 &&
                 clientData.emails.map(email => (
                   <EmailForm
-                    action={match.params.id ? 'edit' : 'create'}
+                    creating={!match.params.id ? true : false}
                     emails={clientData.emails}
                     key={email.id}
                     client={clientData.id || null}
                     emailData={email}
-                    reloadCallback={this.reloadCallback}
-                    pushToClient={this.pushToClient}
-                    removeFromClient={this.removeFromClient}
                   />
                 ))}
             </>
           )}
         </div>
+
         <div className="card-footer">
-          {match.params.id 
-          ? 
-            <button
-            className="btn btn-danger"
-            onClick={() => this.createOrUpdateClient()}>Deletar cliente</button>
+          {match.params.id
+            ?
+            <ProtectedComponent allowedUsers={['admin']}>
+              <div>
+              <button
+                className="btn btn-danger"
+                onClick={() => this.createOrDeleteClient()}>Deletar cliente</button>
+              </div>
+             
+            </ProtectedComponent>
             :
-            <button
-            className="btn btn-success"
-            onClick={() => this.createOrUpdateClient()}>Criar cliente</button>
+            <ProtectedComponent allowedUsers={['admin']}>
+              <div>
+                <button
+                  className="btn btn-success"
+                  onClick={() => this.createOrDeleteClient()}>Criar cliente</button>
+              </div>
+
+            </ProtectedComponent>
           }
-          
+
         </div>
+
+
+
       </div>
     );
   }
@@ -205,7 +240,10 @@ const mapStateToProps = ({ clienteReducer }) => {
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return { setClient: (clientData) => dispatch(setClient(clientData)) }
+  return {
+    setClient: (clientData) => dispatch(setClient(clientData)),
+    clearStoreContent: () => dispatch(clearStore())
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Cliente);

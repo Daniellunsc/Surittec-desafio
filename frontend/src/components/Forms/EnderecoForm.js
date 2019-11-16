@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { saveEnderecoData } from '../../actions';
 import NumberFormat from 'react-number-format';
 import InputLabel from '../InputLabel'
+import ProtectedComponent from '../ProtectedComponent';
 
 class EnderecoForm extends React.Component {
 
@@ -118,10 +119,13 @@ class EnderecoForm extends React.Component {
                     {
                         hovering && (
                             <div className="d-flex justify-content-end">
+                                <ProtectedComponent allowedUsers={['admin']}>
                                 <div className="btn btn-group m-0 p-0">
                                     {!editing && <button className="btn btn-outline-primary" onClick={this.setEdit}>editar</button>}
                                     {editing && <button className="btn btn-outline-success" onClick={this.saveEndereco}>salvar</button>}
                                 </div>
+                                </ProtectedComponent>
+                               
                             </div>
                         )
                     }
@@ -181,8 +185,8 @@ const mapStateToProps = ({ clienteReducer }) => {
         cep: clienteReducer.endereco.cep,
         logradouro: clienteReducer.endereco.logradouro,
         bairro: clienteReducer.endereco.bairro,
-        cidade: clienteReducer.endereco.bairro,
-        uf: clienteReducer.endereco.bairro,
+        cidade: clienteReducer.endereco.cidade,
+        uf: clienteReducer.endereco.uf,
         complemento: clienteReducer.endereco.complemento
     }
 }

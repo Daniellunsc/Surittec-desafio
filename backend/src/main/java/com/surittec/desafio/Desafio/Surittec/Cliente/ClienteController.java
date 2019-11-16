@@ -34,13 +34,7 @@ public class ClienteController {
 
     @PostMapping("/clientes")
     public Cliente createCliente(@Valid @RequestBody Cliente cliente){
-        List<Cliente> duplicatedClientes = clienteRepository.findByCPF(cliente.getCPF());
-        if(duplicatedClientes.size() == 0) {
-            return clienteRepository.save(cliente);
-        }
-        Cliente errorCLiente = new Cliente();
-        errorCLiente.setCPF("Já existe um cliente com esse CPF");
-        return errorCLiente;
+        return clienteRepository.save(cliente);
     }
 
     @PutMapping("/clientes/{id}")
@@ -54,5 +48,12 @@ public class ClienteController {
         clientToSave.setCPF(cliente.getCPF());
         final Cliente clienteAtualizado = clienteRepository.save(clientToSave);
         return ResponseEntity.ok(clienteAtualizado);
+    }
+
+    @DeleteMapping("/clientes/{id}")
+    public Cliente deleteCliente(@PathVariable(value="id") Long clientId){
+        Cliente emailToDelete = clienteRepository.findById(clientId).orElseThrow(() -> new ResourceNotFoundException("Registro não encontrado"));
+        clienteRepository.delete(emailToDelete);
+        return emailToDelete;
     }
 }

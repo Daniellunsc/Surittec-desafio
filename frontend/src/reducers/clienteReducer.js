@@ -9,7 +9,8 @@ import {
     ADD_EMAIL,
     REMOVE_EMAIL,
     SET_EMAIL,
-    SET_CLIENT_FULL_DATA
+    SET_CLIENT_FULL_DATA,
+    CLEAR_STORE
 } from "../actions";
 
 let initialState = {
@@ -51,7 +52,7 @@ const clienteReducer = (state = initialState, action) => {
                     bairro: action.bairro,
                     cidade: action.cidade,
                     uf: action.uf,
-                    complemento: action.bairro
+                    complemento: action.complemento
                 }
             };
 
@@ -144,6 +145,12 @@ const clienteReducer = (state = initialState, action) => {
             return {
                 ...state,
                 emails: emailsWithoutOne
+            }
+
+        case CLEAR_STORE:
+            return {
+                ...state,
+                ...initialState
             }
 
         default:

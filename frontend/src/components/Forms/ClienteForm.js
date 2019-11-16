@@ -5,6 +5,7 @@ import { saveClientData } from "../../actions";
 import ControlButtons from "./ControlButtons";
 import NumberFormat from 'react-number-format'
 import InputLabel from "../InputLabel";
+import ProtectedComponent from "../ProtectedComponent";
 
 class ClienteForm extends React.Component {
   state = {
@@ -43,7 +44,7 @@ class ClienteForm extends React.Component {
     }
     saveData(nome, cpf);
     this.setState({ editing: false, errors: [] });
-    if(!creating) {
+    if (!creating) {
       editCliente(clienteId, nome, cpf);
     }
   };
@@ -83,14 +84,17 @@ class ClienteForm extends React.Component {
             <div class="alert alert-warning alert-dismissible" role="alert">
               <strong>Ops!</strong> Verifique os campos
                 <ul>
-                  {errors.map(error => <li>{error}</li>)}
-                </ul>
+                {errors.map(error => <li>{error}</li>)}
+              </ul>
             </div>
           )
         }
         <div class="card-body">
           {hovering && (
-            <ControlButtons editing={editing} edit={this.setEdit} save={this.saveCliente} />
+
+            <ProtectedComponent allowedUsers={['admin']}>
+              <ControlButtons editing={editing} edit={this.setEdit} save={this.saveCliente} />
+            </ProtectedComponent>
           )}
           <div class="form-group">
             <div className="row">

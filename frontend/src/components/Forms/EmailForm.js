@@ -4,6 +4,7 @@ import { setEmail, setDeleteEmail } from '../../actions';
 import { connect } from 'react-redux'
 import ControlButtons from './ControlButtons';
 import InputLabel from '../InputLabel';
+import ProtectedComponent from '../ProtectedComponent';
 
 class EmailForm extends React.Component {
 
@@ -112,8 +113,12 @@ class EmailForm extends React.Component {
                 }
                 <div class="card-body">
                     {
-                        hovering && (
-                            <ControlButtons editing={editing} edit={this.setEdit} save={this.saveEmail} deleteAction={this.deleteEmail} />
+                        hovering
+                         && (
+                             <ProtectedComponent allowedUsers={['admin']}>
+                                 <ControlButtons editing={editing} edit={this.setEdit} save={this.saveEmail} deleteAction={this.deleteEmail} />
+                             </ProtectedComponent>
+                           
                         )
                     }
                     <div className="row my-3">
