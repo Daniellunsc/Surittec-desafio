@@ -33,6 +33,7 @@ O projeto é composto por dois projetos e suas respectivas tecnologias:
     -   Autenticação por JWT.
 -   Frontend
     -   React.
+    -   Redux.
     -   React-Router.
     -   Bootstrap.
 
