@@ -2,7 +2,6 @@ package com.surittec.desafio.Desafio.Surittec.Cliente.Email;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.surittec.desafio.Desafio.Surittec.Cliente.Cliente;
-import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;

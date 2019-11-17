@@ -30,7 +30,7 @@ public class ClienteEndereco {
     @Column(name = "uf", nullable = false)
     private String uf;
 
-    @Column(name = "complemento", nullable = true)
+    @Column(name = "complemento")
     private String complemento;
 
     @OneToOne()

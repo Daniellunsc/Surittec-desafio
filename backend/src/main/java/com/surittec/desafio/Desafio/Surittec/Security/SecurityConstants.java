@@ -1,5 +1,6 @@
 package com.surittec.desafio.Desafio.Surittec.Security;
 
+// Código do artigo em: https://dev.to/keysh/spring-security-with-jwt-3j76
 public final class SecurityConstants {
 
     public static final String AUTH_LOGIN_URL = "/auth";

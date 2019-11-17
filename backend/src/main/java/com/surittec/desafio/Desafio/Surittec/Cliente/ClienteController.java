@@ -1,16 +1,11 @@
 package com.surittec.desafio.Desafio.Surittec.Cliente;
-
-import com.surittec.desafio.Desafio.Surittec.Cliente.Email.ClienteEmail;
-import com.surittec.desafio.Desafio.Surittec.User.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class ClienteController {
