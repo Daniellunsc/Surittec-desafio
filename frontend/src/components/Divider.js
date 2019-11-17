@@ -1,7 +1,10 @@
+// Divider.js
+
 import React from 'react';
 import AddButton from './AddButton';
 import ProtectedComponent from './ProtectedComponent';
 
+// Componente responsável por exibir um divisor e verificar se deve exibir o botão de adicionar.
 const Divider = ({text, type}) => (
     <>
     <div className="dropdown-divider" />

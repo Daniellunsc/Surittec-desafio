@@ -1,3 +1,5 @@
+// Cliente.js
+
 import React from "react";
 import { getClienteById, createCliente, deleteCliente } from "../api/clientes";
 import TelefoneForm from "./Forms/TelefoneForm";
@@ -10,6 +12,8 @@ import { Redirect } from 'react-router-dom'
 import { setClient, clearStore } from "../actions";
 import ProtectedComponent from "./ProtectedComponent";
 
+// Componente responsável por gerenciar TODOS os formulários e dados do cliente.
+// Cada formulário é separado em um componente, porém todos os dados vêm desse componente vinculado a Store.
 class Cliente extends React.Component {
   state = {
     clientData: {},
@@ -44,9 +48,11 @@ class Cliente extends React.Component {
   createOrDeleteClient = () => {
 
     const { match, clearStoreContent } = this.props;
+    // Verifica se está na tela de cliente ou de criação de cliente
     if (match.params.id) {
       const confirmation = window.confirm('Você deseja deletar esse cliente?')
       if (confirmation) {
+        // Deleta o cliente se confirmado.
         deleteCliente(match.params.id).then(res => {
           if (res.id) {
             clearStoreContent()
@@ -59,8 +65,9 @@ class Cliente extends React.Component {
           }
         })
       }
-
+      // Está na tela de criação de cliente
     } else {
+      // Realiza as validações antes de criar o cliente
       let validationResults = this.validateToInsert();
       if (validationResults.length > 0) {
         this.setState({ errors: validationResults })
@@ -69,6 +76,7 @@ class Cliente extends React.Component {
 
       const { clientData, clearStoreContent } = this.props;
       const { nome, cpf, endereco, emails, telefones } = clientData;
+      // Cria o cliente, redireciona e limpa a store.
       createCliente(nome, cpf, endereco, telefones, emails).then(res => {
         if (res.id) {
           clearStoreContent();
@@ -85,6 +93,10 @@ class Cliente extends React.Component {
 
   }
 
+  // Realiza todas as validações importantes novamente para garantir
+  // a integridade dos dados.
+  // Emails e Telefones não são validados pois eles precisam 
+  //estar válidos para estarem na lista antes de serem inseridos.
   validateToInsert = () => {
     const errors = [];
     const { clientData } = this.state;
@@ -118,10 +130,12 @@ class Cliente extends React.Component {
       errors.push('UF não informado')
     }
 
+    // Verifica se existe ao menos um telefone na lista válido.
     if (telefones.length === 0 || telefones.filter(telefone => telefone.tipo === "").length > 0) {
       errors.push('Ao menos um telefone deve ser registrado')
     }
 
+    // Verifica se existe ao menos um telefone na lista válido.
     if (emails.length === 0 || emails.filter(email => email.email === "").length > 0) {
       errors.push('Ao menos um email deve ser registrado')
     }

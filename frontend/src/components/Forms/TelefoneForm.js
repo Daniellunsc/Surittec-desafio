@@ -1,3 +1,5 @@
+// TelefoneForm.js
+
 import React from 'react';
 import { deleteTelefone, editTelefone, createTelefone } from '../../api/telefones';
 import { connect } from 'react-redux'
@@ -7,6 +9,7 @@ import InputLabel from '../InputLabel';
 import NumberFormat from 'react-number-format';
 import ProtectedComponent from '../ProtectedComponent';
 
+// Componente responsável por gerenciar o formulário de um ÚNICO telefone.
 class TelefoneForm extends React.Component {
 
     state = {
@@ -41,14 +44,23 @@ class TelefoneForm extends React.Component {
         
 
         let validationResults = this.validateFields();
+
+        // Se houverem erros na validação, define o estado de errors.
         if (validationResults.length > 0) {
             this.setState({ errors: validationResults })
             return
         }
+
+          // Se não houverem errors na validação, salva o telefone na Store.
         saveTelefone(id, tipo, numero)
         this.setState({ editing: false, errors: [] })
+        
+         // Se não estiver no modo de criação: editando os dados de um cliente do banco de dados
+        // Verifica se o telefone já é um telefone cadastrado no banco, ou se é apenas um que estava sendo criado.
         if(!creating) {
+             // É um telefone que veio do banco de dados?
             if(telefoneData.numero) {
+                 // Edita o telefone no banco de dados e salva na store o seu novo telefone.
                 editTelefone({ tipo, numero, cliente: client }, telefoneData.id).then((res) => {
                     if(res) {
                         saveTelefone(res.id, res.tipo, res.numero)
@@ -56,6 +68,8 @@ class TelefoneForm extends React.Component {
                     this.setState({ editing: false })
                 })
             } else {
+                // Cria o telefone no banco de dados e salva na store o telefone criado,
+                // retirando o telefone com ID Falso.
                 createTelefone(client, tipo, numero).then(res => {
                     if(res.id) {
                         removeTelefone(id)
@@ -71,19 +85,28 @@ class TelefoneForm extends React.Component {
     deleteNumber = () => {
         const { telefoneData, creating, telefones, removeTelefone } = this.props;
         const { id } = this.state;
-        
+
+        // Se não estiver no modo de criação: editando os dados de um telefone do banco
         if(!creating){
+
+            // Verifica se irão sobrar telefones válidos do cliente ainda
             const validTelephonesRemaining = telefones.filter(telefone => telefone.numero !== "" && telefone.id !== telefoneData.id)
             if(validTelephonesRemaining.length >= 1) {
+                // Se o resultado for maior ou igual a um, verifica se o telefone é um telefone com ID falso
+                // Ou se é um telefone que veio do banco de dados.
                 if(telefoneData.numero !== "") {
+                    // Se for um telefone do banco de dados, deleta o telefone e remove da Store.
                     deleteTelefone(telefoneData.id).then(res => removeTelefone(telefoneData.id))
                 } else {
+                     // Se for um telefone com ID falso, deleta da Store apenas.
                     removeTelefone(telefoneData.id)
                 }
             } else {
+                // Se não sobrar ao menos um telefone depois da deleção, alerta que não é possível remover o telefone.
                 alert('É necessário ao menos um telefone válido.')
             }
         } else{
+             // Se estiver em modo de criação, deleta o telefone da Store.
             removeTelefone(id)
         }
     }

@@ -1,3 +1,7 @@
+// index.js
+//Este arquivo armazena as ações disparadas para os Reducers
+
+
 export const SET_CLIENT_FULL_DATA = 'SET_NOME'
 export const SET_NOME = 'SET_NOME'
 export const SET_CPF = 'SET_CPF'

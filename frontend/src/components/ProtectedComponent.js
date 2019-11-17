@@ -1,6 +1,10 @@
+//ProtectedComponent.js
+
 import React from 'react';
 import { connect } from 'react-redux';
 
+// Componente responsável por gerenciar 
+//se um componente filho pode ser exibido ou não baseado nos usuários informados como permitidos.
 class ProtectedComponent extends React.Component {
     state = {};
 

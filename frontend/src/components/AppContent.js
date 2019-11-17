@@ -1,3 +1,5 @@
+//AppContent.js
+
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Login from './Login';
@@ -9,6 +11,8 @@ import {connect} from 'react-redux' ;
 import { setUserLoggedIn } from '../actions';
 import NotAutorized from './NotAutorized';
 
+
+// Componente responsável por gerenciar todo o conteúdo do app
 class AppContent extends React.Component {
 
     render(){

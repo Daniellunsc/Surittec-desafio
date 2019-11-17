@@ -1,7 +1,11 @@
-import React from 'react';
-import { Redirect } from 'react-router-dom';
-import { checkAuth } from '../api/login';
+//ProtectedRoute.js
 
+import React from 'react';
+import {checkAuth } from '../api/login';
+import {Redirect} from 'react-router-dom'
+
+// Componente responsável por gerenciar 
+// se uma rota pode ser exibida ou não baseado nos usuários informados como permitidos.
 const ProtectedRoute = (Component, allowedUsers = []) => class WithAuth extends React.Component {
         state = {
           loading: true,

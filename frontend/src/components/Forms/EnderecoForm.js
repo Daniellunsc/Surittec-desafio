@@ -1,3 +1,5 @@
+// EnderecoForm.js
+
 import React from 'react';
 import { searchCep } from '../../api/viacep';
 import { editEndereco } from '../../api/endereco';
@@ -7,6 +9,7 @@ import NumberFormat from 'react-number-format';
 import InputLabel from '../InputLabel'
 import ProtectedComponent from '../ProtectedComponent';
 
+// Componente responsável por gerenciar os formulários de endereço.
 class EnderecoForm extends React.Component {
 
     state = {
@@ -58,13 +61,20 @@ class EnderecoForm extends React.Component {
     saveEndereco = () => {
         const { saveEndereco, creating, enderecoData, clienteId } = this.props;
         const { cep, logradouro, bairro, cidade, uf, complemento } = this.state;
+        
         let validationResult = this.validateFields();
+          // Se houverem erros na validação, define o estado de errors.
         if (validationResult.length > 0) {
             this.setState({ errors: validationResult })
             return
         }
+
+         // Se não houverem errors na validação, salva o endereço na Store.
         saveEndereco(cep, logradouro, bairro, cidade, uf, complemento, enderecoData.id || null)
         this.setState({ editing: false, errors: [] })
+
+        // Se não estiver no modo de criação: editando os dados de um cliente do banco de dados
+        // Verifica se o emdereço já é um emdereço cadastrado no banco, ou se é apenas um que estava sendo criado.
         if(!creating && enderecoData){
             editEndereco({cep, logradouro, bairro, cidade, uf, complemento, cliente: clienteId}, enderecoData.id)
         }
@@ -77,6 +87,7 @@ class EnderecoForm extends React.Component {
             errors.push('Cep deve ser preenchido');
         }
 
+        // Caso o CEP não esteja em formato valido preenchido, o regex não irá dar MATCH.
         if (!cep.match(/[0-9]{5}-[0-9]{3}/)) {
             errors.push('Cep em formato inválido')
         }
@@ -180,6 +191,7 @@ class EnderecoForm extends React.Component {
     }
 }
 
+// Mapeia os dados da Store para os dados de endereço nas props do componente.
 const mapStateToProps = ({ clienteReducer }) => {
     return {
         cep: clienteReducer.endereco.cep,

@@ -1,3 +1,9 @@
+//login.js
+//Este arquivo representa os métodos utilizados para manipular o login.
+
+// Realiza login
+// @param usuario: string
+// @param senha: string
 export const performLogin = (usuario, senha) => {
   return fetch("http://localhost:8080/auth", {
     method: "POST",
@@ -5,6 +11,8 @@ export const performLogin = (usuario, senha) => {
   }).then(res => res.json());
 };
 
+// Verifica o usuário que está autênticado
+// Caso não exista um token armazenado, automáticamente é retornado false.
 export const checkAuth = () => {
   const authToken = localStorage.getItem("tokenAuth");
   return new Promise(async (resolve, reject) => {

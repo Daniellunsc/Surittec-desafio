@@ -1,9 +1,12 @@
+// Login.js
+
 import React from "react";
 import { checkAuth, performLogin } from "../api/login";
 import {Redirect} from 'react-router-dom';
 import { setUserLoggedIn } from "../actions";
 import {connect} from 'react-redux'
 
+// Componente responsável por gerenciar todas funcionalidades de Login.
 class Login extends React.Component {
   state = {
     usuario: "",
