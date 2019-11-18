@@ -8,7 +8,6 @@ import EnderecoForm from "./Forms/EnderecoForm";
 import ClienteForm from "./Forms/ClienteForm";
 import Divider from "./Divider";
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom'
 import { setClient, clearStore } from "../actions";
 import ProtectedComponent from "./ProtectedComponent";
 
@@ -19,10 +18,6 @@ class Cliente extends React.Component {
     clientData: {},
     loading: true,
     errors: [],
-    redirect: {
-      to: null,
-      should: false,
-    },
   };
 
   componentDidMount() {
@@ -56,12 +51,8 @@ class Cliente extends React.Component {
         deleteCliente(match.params.id).then(res => {
           if (res.id) {
             clearStoreContent()
-            this.setState({
-              redirect: {
-                to: '/',
-                should: true,
-              }
-            })
+            window.location.href = "/"
+            
           }
         })
       }
@@ -80,12 +71,7 @@ class Cliente extends React.Component {
       createCliente(nome, cpf, endereco, telefones, emails).then(res => {
         if (res.id) {
           clearStoreContent();
-          this.setState({
-            redirect: {
-              to: `/`,
-              should: true
-            }
-          })
+          window.location.href = "/"
         }
       })
     }
@@ -145,11 +131,8 @@ class Cliente extends React.Component {
   }
 
   render() {
-    const { clientData, loading, errors, redirect } = this.state;
+    const { clientData, loading, errors } = this.state;
     const { match } = this.props;
-    if (redirect.should) {
-      return <Redirect to={`${redirect.to}`} />
-    }
 
     return (
       <div
@@ -163,7 +146,7 @@ class Cliente extends React.Component {
           errors.length > 0 && (
             <div class="alert alert-warning alert-dismissible" role="alert">
               <strong>Ops!</strong> Verifique os campos
-                            <ul>
+              <ul>
                 {errors.map(error => <li>{error}</li>)}
               </ul>
               <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -224,7 +207,7 @@ class Cliente extends React.Component {
         </div>
 
         <div className="card-footer">
-          {match.params.id
+          {match.params.id && !loading
             ?
             <ProtectedComponent allowedUsers={['admin']}>
               <div>

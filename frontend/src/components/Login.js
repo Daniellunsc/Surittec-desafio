@@ -2,7 +2,6 @@
 
 import React from "react";
 import { checkAuth, performLogin } from "../api/login";
-import {Redirect} from 'react-router-dom';
 import { setUserLoggedIn } from "../actions";
 import {connect} from 'react-redux'
 
@@ -12,15 +11,17 @@ class Login extends React.Component {
     usuario: "",
     senha: "",
     loading: true,
-    redirect: false,
   };
 
   componentDidMount() {
+    const {saveLoggedUser} = this.props;
     checkAuth().then(res => {
       if (!res || res.error) {
         this.setState({ loading: false });
       } else {
-        this.setState({loading: false, redirect: true});
+        this.setState({loading: false});
+        saveLoggedUser({...res})
+        window.location.href = "/home"
       }
     });
   }
@@ -49,18 +50,14 @@ class Login extends React.Component {
     if(loginResponse) {
         if(loginResponse.token) {
             localStorage.setItem('tokenAuth', loginResponse.token);
-            this.setState({redirect: true})
             saveLoggedUser({usuario})
+            window.location.href = "/home"
         }
     }
   }
 
   render() {
-    const { loading, usuario, senha, redirect } = this.state;
-
-    if(redirect) {
-        return <Redirect to="/home"/>
-    }
+    const { loading, usuario, senha } = this.state;
 
     return (
       <div className="card" style={{ width: "18rem" }}>

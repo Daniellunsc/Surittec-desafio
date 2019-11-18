@@ -22,9 +22,9 @@ class TelefoneForm extends React.Component {
     }
 
     componentDidMount() {
-        const { telefoneData } = this.props;
+        const { telefoneData, creating } = this.props;
         if (telefoneData) {
-            this.setState({ id: telefoneData.id, tipo: telefoneData.tipo, numero: telefoneData.numero })
+            this.setState({ id: telefoneData.id, tipo: telefoneData.tipo, numero: telefoneData.numero, editing: creating })
         }
     }
 
@@ -113,6 +113,7 @@ class TelefoneForm extends React.Component {
 
     validateFields = () => {
         const { tipo, numero } = this.state;
+        const {creating} = this.props;
         let errors = []
 
         if (!tipo) {
@@ -123,15 +124,29 @@ class TelefoneForm extends React.Component {
             errors.push('Um numero deve ser informado')
         }
 
-        if ((tipo === "residencial" || tipo === "comercial")
+        if(creating) {
+            if ((tipo === "residencial" || tipo === "comercial")
             && numero && !numero.match(/\(\d{2,}\) \d{4,}\-\d{4}/)) {
             errors.push('Telefone não está compatível com o tipo informado')
+            }
+
+            if ((tipo === "celular")
+                && numero && !numero.match(/\(\d{2,}\) \d{1,} \d{4,}\-\d{4}/)) {
+                errors.push('Telefone não está compatível com o tipo informado')
+            }
+        } else {
+            if ((tipo === "residencial" || tipo === "comercial")
+            && numero && !numero.match(/\(\d{2,}\) \d{4,}\-\d{4}/) && !numero.match(/\d{2,}\d{4,}\d{4}/)) {
+            errors.push('Telefone não está compatível com o tipo informado')
+            }
+
+            if ((tipo === "celular")
+                && numero && !numero.match(/\(\d{2,}\) \d{1,} \d{4,}\-\d{4}/) && !numero.match(/\d{2,}\d{4,}\d{4}/)) {
+                errors.push('Telefone não está compatível com o tipo informado')
+            }
         }
 
-        if ((tipo === "celular")
-            && numero && !numero.match(/\(\d{2,}\) \d{1,} \d{4,}\-\d{4}/)) {
-            errors.push('Telefone não está compatível com o tipo informado')
-        }
+       
 
         return errors;
     }

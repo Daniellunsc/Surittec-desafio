@@ -19,9 +19,9 @@ class EmailForm extends React.Component {
     }
 
     componentDidMount() {
-        const { emailData } = this.props;
+        const { emailData, creating } = this.props;
         if (emailData) {
-            this.setState({ id: emailData.id, email: emailData.email })
+            this.setState({ id: emailData.id, email: emailData.email, editing: creating })
         }
     }
 

@@ -25,14 +25,15 @@ class EnderecoForm extends React.Component {
     }
 
     componentDidMount() {
-        const { cep, logradouro, bairro, cidade, uf, complemento } = this.props;
+        const { cep, logradouro, bairro, cidade, uf, complemento, creating } = this.props;
         this.setState({
             cep: cep,
             logradouro: logradouro,
             bairro: bairro,
             cidade: cidade,
             uf: uf,
-            complemento: complemento
+            complemento: complemento,
+            editing: creating
         })
     }
 
@@ -83,14 +84,23 @@ class EnderecoForm extends React.Component {
     validateFields = () => {
         let errors = [];
         const { cep, logradouro, bairro, cidade, uf } = this.state;
+        const {creating} = this.props;
         if (!cep) {
             errors.push('Cep deve ser preenchido');
         }
 
-        // Caso o CEP não esteja em formato valido preenchido, o regex não irá dar MATCH.
-        if (!cep.match(/[0-9]{5}-[0-9]{3}/)) {
-            errors.push('Cep em formato inválido')
+        if(creating) {
+            // Caso o CEP não esteja em formato valido preenchido, o regex não irá dar MATCH.
+            if (!cep.match(/[0-9]{5}-[0-9]{3}/)) {
+                errors.push('Cep em formato inválido')
+            }
+        } else {
+            // Caso o CEP não esteja em formato valido preenchido, o regex não irá dar MATCH.
+            if (!cep.match(/[0-9]{5}-[0-9]{3}/) && !cep.match(/[0-9]{5}[0-9]{3}/)) {
+                errors.push('Cep em formato inválido')
+            }
         }
+        
 
         if (!logradouro) {
             errors.push('Logradouro deve ser preenchido')
@@ -120,7 +130,7 @@ class EnderecoForm extends React.Component {
                     errors.length > 0 && (
                         <div class="alert alert-warning alert-dismissible" role="alert">
                             <strong>Ops!</strong> Verifique os campos
-                <ul>
+                            <ul>
                                 {errors.map(error => <li>{error}</li>)}
                             </ul>
                         </div>

@@ -1,17 +1,12 @@
 import React from "react";
 import { getAllClientes } from "../api/clientes";
 import ClienteList from "./ClienteList";
-import { Redirect } from 'react-router-dom';
 import ProtectedComponent from "./ProtectedComponent";
 
 class Home extends React.Component {
   state = {
     loading: true,
     listClients: [],
-    redirect: {
-      to: "",
-      should: false,
-    }
   };
 
   componentDidMount() {
@@ -21,23 +16,17 @@ class Home extends React.Component {
   deslogarUsuario = () => {
     const confirmationDeslog = window.confirm('Você deseja deslogar?')
     if (confirmationDeslog) {
-      localStorage.removeItem('tokenAuth')
       window.location.href = '/'
+      localStorage.removeItem('tokenAuth')
     }
   }
 
   render() {
-    const { listClients, redirect } = this.state;
-
-    if (redirect.should) {
-      return <Redirect to={redirect.to} />
-    }
-
-
+    const { listClients } = this.state;
 
     return (
       <div class="card card-clientes">
-        <div className="card-header d-flex justify-content-between" onClick={() => this.setState({ redirect: { to: '/createcliente', should: true } })}>
+        <div className="card-header d-flex justify-content-between" onClick={() => window.location.href = "/createcliente"}>
           <div>
             <h5>Clientes</h5>
           </div>

@@ -13,17 +13,18 @@ import ProtectedComponent from "../ProtectedComponent";
 class ClienteForm extends React.Component {
   state = {
     hovering: false,
-    editing: true,
+    editing: false,
     nome: "",
     cpf: "",
     errors: []
   };
 
   componentDidMount() {
-    const { nome, cpf } = this.props;
+    const { nome, cpf, creating } = this.props;
     this.setState({
       nome: nome,
-      cpf: cpf
+      cpf: cpf,
+      editing: creating
     });
   }
 
@@ -63,6 +64,7 @@ class ClienteForm extends React.Component {
   validateFields = () => {
     let errors = []
     const { nome, cpf } = this.state;
+    const { creating } = this.props;
     if (nome.length < 3) {
       errors.push('Nome não pode ser menor que 3 caracteres')
     }
@@ -76,10 +78,18 @@ class ClienteForm extends React.Component {
       errors.push('Só é permitido letras, números e espaços no nome.')
     }
     
-    // Se o CPF não tiver todos os caracteres preenchidos, o regex não irá dar match.
-    if (!cpf.match(/[0-9]{3}.[0-9]{3}.[0-9]{3}-[0-9]{2}/)) {
-      errors.push('CPF no formato inválido')
+    if(creating) {
+       // Se o CPF não tiver todos os caracteres preenchidos, o regex não irá dar match.
+      if (!cpf.match(/[0-9]{3}.[0-9]{3}.[0-9]{3}-[0-9]{2}/)) {
+        errors.push('CPF no formato inválido')
+      }
+    } else {
+       // Se o CPF não tiver todos os caracteres preenchidos, o regex não irá dar match, ou o CPF não mudou e permanece o mesmo do banco
+       if (!cpf.match(/[0-9]{3}.[0-9]{3}.[0-9]{3}-[0-9]{2}/) && !cpf.match(/[0-9]{3}[0-9]{3}[0-9]{3}[0-9]{2}/)) {
+        errors.push('CPF no formato inválido')
+      }
     }
+   
 
     return errors;
   }
@@ -96,7 +106,7 @@ class ClienteForm extends React.Component {
           errors.length > 0 && (
             <div class="alert alert-warning alert-dismissible" role="alert">
               <strong>Ops!</strong> Verifique os campos
-                <ul>
+              <ul>
                 {errors.map(error => <li>{error}</li>)}
               </ul>
             </div>

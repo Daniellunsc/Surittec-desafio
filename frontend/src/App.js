@@ -1,9 +1,7 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import AppContent from './components/AppContent';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './api';
 
 function App() {
   return (
