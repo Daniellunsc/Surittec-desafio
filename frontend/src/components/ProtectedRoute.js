@@ -22,7 +22,7 @@ const ProtectedRoute = (Component, allowedUsers = []) => class WithAuth extends 
           })
             .catch((err) => {
               console.log(err);
-              this.setState({ permissions: [], loading: false });
+              this.setState({ loading: false });
             });
         }
 
