@@ -47,6 +47,7 @@ Existem duas maneiras de se iniciar o projeto:
   - Para executar via docker-compose, basta estar na pasta raíz do projeto e executar: 
    `` $ docker-compose up ``
   - Obs: é necessário ter o docker instalado.
+  - O serviço de backend pode demorar a ser executado pois depende do healthcheck do docker-compose no serviço `db`.
 - Instalando as dependências de cada um e iniciando:
 
   - Configurando banco de dados:
